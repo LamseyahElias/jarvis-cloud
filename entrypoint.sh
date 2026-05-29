@@ -9,9 +9,14 @@ echo "================================================"
 export HERMES_HOME="${HERMES_HOME:-/app/hermes-home}"
 mkdir -p $HERMES_HOME
 
-# Write API key to .env
-# Hardcoded API key
-echo "DEEPSEEK_API_KEY=sk-58c3d462886c4eb6bfacd631d8c55178" > $HERMES_HOME/.env
+# Copy config from repo to Hermes home
+cp /app/config.yaml $HERMES_HOME/config.yaml
+
+# Write env vars from Railway secrets
+cat > $HERMES_HOME/.env << EOF
+DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+EOF
 
 echo ""
 echo "  Telegram: ${TELEGRAM_BOT_TOKEN:+✓} ${TELEGRAM_BOT_TOKEN:-✗ not set}"
@@ -19,9 +24,13 @@ echo "  DeepSeek: ${DEEPSEEK_API_KEY:+✓} ${DEEPSEEK_API_KEY:-✗ not set}"
 echo "  Hermes:   $HERMES_HOME"
 echo ""
 
-# Find the Hermes gateway module
-if python -c "import gateway.run" 2>/dev/null; then
-    exec python -m gateway.run --config $HERMES_HOME/config.yaml
-else
-    exec hermes gateway run --config $HERMES_HOME/config.yaml
-fi
+# Bootstrap non-Python deps (node, browser, etc) — non-fatal
+echo "→ Running postinstall (optional deps)..."
+hermes postinstall 2>&1 || echo "  (postinstall non-fatal, continuing)"
+
+echo ""
+echo "→ Starting gateway..."
+echo ""
+
+# Start Hermes gateway in foreground
+exec hermes gateway run --config $HERMES_HOME/config.yaml

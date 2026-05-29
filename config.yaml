@@ -21,20 +21,9 @@ agent:
   image_input_mode: auto
   disabled_toolsets: []
 terminal:
-  backend: ssh
+  backend: local
   cwd: /tmp
   timeout: 180
-  ssh:
-    host: "${LOCAL_PC_HOST:-localhost}"
-    port: ${LOCAL_PC_PORT:-22}
-    user: "${LOCAL_PC_USER:-USER}"
-    key_path: /app/hermes-home/ssh_key
-    key_type: ed25519
-  container_cpu: 1
-  container_memory: 5120
-  container_disk: 51200
-  container_persistent: true
-  persistent_shell: true
 web:
   backend: ''
   search_backend: ''
@@ -111,7 +100,7 @@ auxiliary:
     extra_body: {}
 display:
   compact: false
-  personality: kawaii
+  personality: default
   resume_display: full
   busy_input_mode: interrupt
   tui_auto_resume_recent: false
@@ -153,37 +142,11 @@ tts:
   provider: edge
   edge:
     voice: en-US-AriaNeural
-  elevenlabs:
-    voice_id: pNInz6obpgDQGcFmaJgB
-    model_id: eleven_multilingual_v2
-  openai:
-    model: gpt-4o-mini-tts
-    voice: alloy
-  xai:
-    voice_id: eve
-    language: en
-    sample_rate: 24000
-    bit_rate: 128000
-  mistral:
-    model: voxtral-mini-tts-2603
-    voice_id: c69964a6-ab8b-4f8a-9465-ec0925096ec8
-  neutts:
-    ref_audio: ''
-    ref_text: ''
-    model: neuphonic/neutts-air-q4-gguf
-    device: cpu
-  piper:
-    voice: en_US-lessac-medium
 stt:
   enabled: true
   provider: local
   local:
     model: base
-    language: ''
-  openai:
-    model: whisper-1
-  mistral:
-    model: voxtral-mini-latest
 voice:
   record_key: ctrl+b
   max_recording_seconds: 120
@@ -230,7 +193,7 @@ timezone: 'Africa/Casablanca'
 
 # ── TELEGRAM ──────────────────────────────────────────────────────────
 telegram:
-  token: "8410132335:AAFXTv3IJCVqR5QtM-b637w9C9Qil1po2_8"
+  token: "${TELEGRAM_BOT_TOKEN}"
   reactions: false
   allowed_chats: ''
   channel_prompts: {}
