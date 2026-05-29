@@ -1,38 +1,24 @@
-FROM python:3.11-slim
-
-WORKDIR /app
+FROM python:3.11-slim as base
 
 # Install system deps
 RUN apt-get update && apt-get install -y \
     git \
     curl \
-    openssh-client \
-    build-essential \
-    nodejs \
-    npm \
     && rm -rf /var/lib/apt/lists/*
 
-# Clone Hermes Agent
-RUN git clone https://github.com/NousResearch/Hermes-Agent.git /app/hermes-agent
 WORKDIR /app
 
-# API keys (build-time injection)
-ARG TELEGRAM_BOT_TOKEN
-ARG DEEPSEEK_API_KEY
+# Clone Hermes Agent (shallow, no browser tools needed in cloud)
+RUN git clone --depth 1 https://github.com/NousResearch/Hermes-Agent.git /app/hermes-agent
 
-ENV TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-ENV DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
-/hermes-agent
+WORKDIR /app/hermes-agent
 
-# Install Python deps
+# Install Python deps — no editable install, no extras
 RUN python3 -m venv .venv && \
     . .venv/bin/activate && \
-    pip install --upgrade pip && \
-    pip install -e . && \
-    pip install pyyaml
-
-# Install Node deps (for browser tools)
-RUN npm install --ignore-scripts
+    pip install --upgrade pip setuptools wheel && \
+    pip install -e . --no-cache-dir && \
+    pip install pyyaml --no-cache-dir
 
 # Create hermes home directory
 ENV HERMES_HOME=/app/hermes-home
@@ -48,7 +34,7 @@ RUN chmod +x /app/entrypoint.sh
 # Create skills directory for JARVIS
 RUN mkdir -p $HERMES_HOME/skills
 
-# Expose API port (for tunnel + webhooks)
+# Expose API port
 EXPOSE 8000
 
 ENTRYPOINT ["/app/entrypoint.sh"]
