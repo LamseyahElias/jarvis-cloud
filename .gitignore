@@ -1,0 +1,5 @@
+node_modules/
+.env
+*.log
+local-tunnel/logs/
+.DS_Store

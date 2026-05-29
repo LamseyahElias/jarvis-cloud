@@ -1,0 +1,15 @@
+{
+  "name": "jarvis-local-tunnel",
+  "version": "1.0.0",
+  "description": "Local tunnel daemon for JARVIS cloud — lets the cloud Hermes execute commands on Windows",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "install-service": "node install-service.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "morgan": "^1.10.0"
+  }
+}
