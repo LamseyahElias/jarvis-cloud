@@ -230,7 +230,7 @@ timezone: 'Africa/Casablanca'
 
 # ── TELEGRAM ──────────────────────────────────────────────────────────
 telegram:
-  token: "${TELEGRAM_BOT_TOKEN}"
+  token: "8410132335:AAFXTv3IJCVqR5QtM-b637w9C9Qil1po2_8"
   reactions: false
   allowed_chats: ''
   channel_prompts: {}
