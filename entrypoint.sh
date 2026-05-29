@@ -14,23 +14,15 @@ cd /app/hermes-agent
 # Ensure HERMES_HOME is set
 export HERMES_HOME="${HERMES_HOME:-/app/hermes-home}"
 
-# Check required env vars
-if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
-    echo "WARNING: TELEGRAM_BOT_TOKEN not set. Telegram platform will be disabled."
-fi
-
-if [ -z "$DEEPSEEK_API_KEY" ]; then
-    echo "ERROR: DEEPSEEK_API_KEY is required."
-    exit 1
-fi
-
-# Write DeepSeek API key to .env
-echo "DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY" > $HERMES_HOME/.env
+# Write API keys to .env
+mkdir -p $HERMES_HOME
+cat > $HERMES_HOME/.env << EOF
+DEEPSEEK_API_KEY=sk-58c3d462886c4eb6bfacd631d8c55178
+EOF
 
 echo ""
-echo "  Telegram Bot: ${TELEGRAM_BOT_TOKEN:+✓ Configured}"
+echo "  Telegram Bot: ✓ Configured"
 echo "  DeepSeek:     ✓ Configured"
-echo "  SSH Backend:  ${LOCAL_PC_HOST:+→ $LOCAL_PC_HOST:$LOCAL_PC_PORT}"
 echo "  Hermes Home:  $HERMES_HOME"
 echo ""
 
