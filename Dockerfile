@@ -14,7 +14,15 @@ RUN apt-get update && apt-get install -y \
 
 # Clone Hermes Agent
 RUN git clone https://github.com/NousResearch/Hermes-Agent.git /app/hermes-agent
-WORKDIR /app/hermes-agent
+WORKDIR /app
+
+# API keys (build-time injection)
+ARG TELEGRAM_BOT_TOKEN
+ARG DEEPSEEK_API_KEY
+
+ENV TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+ENV DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+/hermes-agent
 
 # Install Python deps
 RUN python3 -m venv .venv && \

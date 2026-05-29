@@ -12,14 +12,15 @@ cd /app/hermes-agent
 export HERMES_HOME="${HERMES_HOME:-/app/hermes-home}"
 mkdir -p $HERMES_HOME
 
-cat > $HERMES_HOME/.env << 'KEYS'
-DEEPSEEK_API_KEY=sk-58c3d462886c4eb6bfacd631d8c55178
-KEYS
+# Write API key to .env (Hermes reads this)
+if [ -n "$DEEPSEEK_API_KEY" ]; then
+    echo "DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY" > $HERMES_HOME/.env
+fi
 
 echo ""
-echo "  Telegram Bot: ✓ Configured"
-echo "  DeepSeek:     ✓ Configured"
-echo "  Hermes Home:  $HERMES_HOME"
+echo "  Telegram: ${TELEGRAM_BOT_TOKEN:+✓} ${TELEGRAM_BOT_TOKEN:-✗ (not set)}"
+echo "  DeepSeek: ${DEEPSEEK_API_KEY:+✓} ${DEEPSEEK_API_KEY:-✗ (not set)}"
+echo "  Hermes:   $HERMES_HOME"
 echo ""
 
 exec python -m gateway.run --config $HERMES_HOME/config.yaml
