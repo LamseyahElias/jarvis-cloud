@@ -10,9 +10,8 @@ export HERMES_HOME="${HERMES_HOME:-/app/hermes-home}"
 mkdir -p $HERMES_HOME
 
 # Write API key to .env
-if [ -n "$DEEPSEEK_API_KEY" ]; then
-    echo "DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY" > $HERMES_HOME/.env
-fi
+# Hardcoded API key
+echo "DEEPSEEK_API_KEY=sk-58c3d462886c4eb6bfacd631d8c55178" > $HERMES_HOME/.env
 
 echo ""
 echo "  Telegram: ${TELEGRAM_BOT_TOKEN:+✓} ${TELEGRAM_BOT_TOKEN:-✗ not set}"
