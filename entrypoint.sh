@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eo pipefail
 
 echo "================================================"
 echo "  JARVIS — Cloud Deployment"
@@ -14,11 +14,24 @@ cat > $HERMES_HOME/.env << EOF
 DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
 EOF
 
-# Copy and inject real tokens into config.yaml
+# Copy config and inject real token using Python (safe with any special chars)
 cp /app/config.yaml $HERMES_HOME/config.yaml
 
-# Replace placeholder with real token (sed works on Linux/Railway containers)
-sed -i "s/\${TELEGRAM_BOT_TOKEN}/${TELEGRAM_BOT_TOKEN}/g" $HERMES_HOME/config.yaml
+if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+  echo "ERROR: TELEGRAM_BOT_TOKEN is not set!"
+  echo "Add it as a Railway environment variable in the Variables tab."
+  exit 1
+fi
+
+python3 -c "
+import re
+with open('$HERMES_HOME/config.yaml', 'r') as f:
+    content = f.read()
+content = content.replace('\${TELEGRAM_BOT_TOKEN}', '$TELEGRAM_BOT_TOKEN')
+with open('$HERMES_HOME/config.yaml', 'w') as f:
+    f.write(content)
+print('Token injected successfully')
+"
 
 echo ""
 echo "  Telegram: ${TELEGRAM_BOT_TOKEN:+✓} ${TELEGRAM_BOT_TOKEN:-✗ not set}"
