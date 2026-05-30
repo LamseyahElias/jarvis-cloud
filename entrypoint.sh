@@ -9,14 +9,16 @@ echo "================================================"
 export HERMES_HOME="${HERMES_HOME:-/app/hermes-home}"
 mkdir -p $HERMES_HOME
 
-# Copy config from repo to Hermes home
-cp /app/config.yaml $HERMES_HOME/config.yaml
-
-# Write env vars from Railway secrets
+# Write env vars (DeepSeek reads from .env)
 cat > $HERMES_HOME/.env << EOF
 DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
-TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
 EOF
+
+# Copy and inject real tokens into config.yaml
+cp /app/config.yaml $HERMES_HOME/config.yaml
+
+# Replace placeholder with real token (sed works on Linux/Railway containers)
+sed -i "s/\${TELEGRAM_BOT_TOKEN}/${TELEGRAM_BOT_TOKEN}/g" $HERMES_HOME/config.yaml
 
 echo ""
 echo "  Telegram: ${TELEGRAM_BOT_TOKEN:+✓} ${TELEGRAM_BOT_TOKEN:-✗ not set}"
